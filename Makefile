@@ -11,7 +11,8 @@ NAME	= spaceInvader
 
 SRCS 	=  
 
-MAIN	= main.cpp
+MAIN	=	main.cpp \
+			src/Entity.cpp
 
 OBJS	= $(SRCS:.cpp=.o)
 
