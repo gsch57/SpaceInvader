@@ -12,7 +12,8 @@ NAME	= spaceInvader
 SRCS 	=  
 
 MAIN	=	main.cpp \
-			src/Entity.cpp
+			src/Entity.cpp \
+			src/Ncurses.cpp
 
 OBJS	= $(SRCS:.cpp=.o)
 
