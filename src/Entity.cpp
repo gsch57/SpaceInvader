@@ -25,8 +25,3 @@ char *Entity::renderer() const
 {
     return "";
 }
-
-EntityType Entity::getType() const
-{
-    return m_type;
-}

@@ -62,7 +62,7 @@ void Game::updateEntity()
 void Game::addMissile()
 {
     std::pair<int, int> position = m_player->getPosition();
-    Entity *missile = EntityFactory::createPlayer(100, position.first - 1, position.second);
+    Entity *missile = EntityFactory::createMissile(100, position.first - 1, position.second);
     m_entityMap[missile->getPosition()] = missile;
     m_entityVector.push_back(missile);
 }

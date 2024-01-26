@@ -15,7 +15,6 @@ class Entity
 private:
     int m_life;
     std::pair<int, int> m_position;
-    EntityType m_type;
 
 public:
     Entity(int life, int positionX, int positionY);
@@ -27,7 +26,7 @@ public:
     std::pair<int, int> getPosition() const;
     void setPosition(int positionX, int positionY);
     int getLife() const;
-    EntityType getType() const;
+    virtual EntityType getType() const = 0;
 };
 
 struct EntityComparator

@@ -11,6 +11,7 @@ public:
 
     virtual char *renderer() const;
     virtual void move() const;
+    EntityType getType() const;
 };
 
 #endif // __PLAYER_H__

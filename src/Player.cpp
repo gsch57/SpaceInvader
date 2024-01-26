@@ -14,3 +14,8 @@ char *Player::renderer() const
 void Player::move() const
 {
 }
+
+EntityType Player::getType() const
+{
+    return PLAYER;
+}
