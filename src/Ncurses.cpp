@@ -42,6 +42,7 @@ void Ncurses::clearGameWindow() const
 
 void Ncurses::refreshGameWindow() const
 {
+    box(m_gameWindow, 0, 0);
     refresh();
     wrefresh(m_gameWindow);
 }
