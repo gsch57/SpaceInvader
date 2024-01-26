@@ -15,7 +15,8 @@ MAIN    = main.cpp \
           src/Ncurses.cpp \
           src/Game.cpp \
           src/Player.cpp \
-          src/EntityFactory.cpp
+          src/EntityFactory.cpp \
+          src/Missile.cpp
 
 OBJS_MAIN = $(MAIN:.cpp=.o)
 
