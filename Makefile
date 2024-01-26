@@ -4,32 +4,30 @@ CC      = g++
 # compiler flags:
 #  -g    adds debugging information to the executable file
 #  -Wall turns on most, but not all, compiler warnings
-CCFLAGS = -g -Wall -lncurses
-RM      = rm -rf
+CCFLAGS = -g -Wall -std=c++11
 
-NAME	= spaceInvader
+RM      = rm -f
 
-SRCS 	=  
+NAME    = spaceInvader
 
-MAIN	=	main.cpp \
-			src/Entity.cpp \
-			src/Ncurses.cpp
+MAIN    = main.cpp \
+          src/Entity.cpp \
+          src/Ncurses.cpp \
+          src/Game.cpp \
+          src/Player.cpp \
+          src/EntityFactory.cpp
 
-OBJS	= $(SRCS:.cpp=.o)
-
-OBJS_MAIN	= $(MAIN:.cpp=.o)
+OBJS_MAIN = $(MAIN:.cpp=.o)
 
 all: $(NAME)
 
-$(NAME): $(OBJS) $(OBJS_MAIN)
-	$(CC) $(CCFLAGS) -o $(NAME) $(OBJS) $(OBJS_MAIN)
+$(NAME): $(OBJS_MAIN)
+	$(CC) $(CCFLAGS) -o $(NAME) $(OBJS_MAIN) -lncurses
 
 clean:
-	$(RM) $(OBJS) $(OBJS_MAIN)
-
-all: clean $(MAIN)
+	$(RM) $(OBJS_MAIN)
 
 fclean: clean
 	$(RM) $(NAME)
 
-re:	fclean all
+re: fclean all

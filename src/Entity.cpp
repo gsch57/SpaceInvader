@@ -1,27 +1,32 @@
 #include "../includes/Entity.hpp"
 
-Entity::Entity(int life, int position)
+Entity::Entity(int life, int positionX, int positionY)
 {
     m_life = life;
-    m_position = position;
+    m_position = std::pair<int, int>(positionX, positionY);
 }
 
-int Entity::getPosition()
+std::pair<int, int> Entity::getPosition() const
 {
     return m_position;
 }
 
-void Entity::setPosition(int position)
+void Entity::setPosition(int positionX, int positionY)
 {
-    m_position = position;
+    m_position = std::pair<int, int>(positionX, positionY);
 }
 
-int Entity::getLife()
+int Entity::getLife() const
 {
     return m_life;
 }
 
-char Entity::renderer()
+char *Entity::renderer() const
 {
-    return char(' ');
+    return "";
+}
+
+EntityType Entity::getType() const
+{
+    return m_type;
 }

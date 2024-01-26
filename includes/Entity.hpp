@@ -1,22 +1,44 @@
 #ifndef __ENTITY_H__
 #define __ENTITY_H__
 
-#include "IObject.hpp"
+#include <vector>
 
-class Entity : public IObject
+enum EntityType
+{
+    MISSILE,
+    PLAYER,
+    ENEMY
+};
+
+class Entity
 {
 private:
     int m_life;
-    int m_position;
+    std::pair<int, int> m_position;
+    EntityType m_type;
 
 public:
-    Entity(int life, int position);
-    // virtual void fire() = 0;
-    // virtual void move() = 0;
-    char renderer();
-    int getPosition();
-    void setPosition(int position);
-    int getLife();
+    Entity(int life, int positionX, int positionY);
+    virtual ~Entity(){};
+
+    virtual char *renderer() const = 0;
+    virtual void move() const = 0;
+
+    std::pair<int, int> getPosition() const;
+    void setPosition(int positionX, int positionY);
+    int getLife() const;
+    EntityType getType() const;
+};
+
+struct EntityComparator
+{
+    bool operator()(const Entity &a, const Entity &b) const
+    {
+        // Utilise l'ordre intrinsèque des énumérations pour le tri
+        return a.getType() < b.getType() ||
+               (a.getType() == b.getType() && a.getPosition() < b.getPosition()) ||
+               (a.getType() == b.getType() && a.getPosition() == b.getPosition() && a.getLife() < b.getLife());
+    }
 };
 
 #endif // __ENTITY_H__
