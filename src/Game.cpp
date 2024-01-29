@@ -42,29 +42,55 @@ void Game::loadLevel()
     }
 }
 
+void Game::moveMissile(Entity *entity, int index)
+{
+    std::pair<int, int> position = entity->getPosition();
+    if (position.first - 1 > 0)
+    {
+        if (m_entityMap[position])
+            m_entityMap.erase(position);
+        position.first -= 1;
+        entity->setPosition(position.first, position.second);
+        m_entityMap[position] = entity;
+    }
+    else
+    {
+        if (m_entityMap[position])
+            m_entityMap.erase(position);
+        if (m_entityVector.end() > m_entityVector.begin() + index)
+            m_entityVector.erase(m_entityVector.begin() + index);
+    }
+}
+
 void Game::updateEntity()
 {
+    int index = 0;
     for (auto &entity : m_entityVector)
     {
-        // EntityType type = entity->getType();
-        // switch (expression)
-        // {
-        // case /* constant-expression */:
-        //     /* code */
-        //     break;
-
-        // default:
-        //     break;
-        // }
+        if (entity)
+        {
+            EntityType type = entity->getType();
+            switch (type)
+            {
+            case MISSILE:
+                moveMissile(entity, index);
+                break;
+            }
+        }
+        index++;
     }
 }
 
 void Game::addMissile()
 {
     std::pair<int, int> position = m_player->getPosition();
-    Entity *missile = EntityFactory::createMissile(100, position.first - 1, position.second);
-    m_entityMap[missile->getPosition()] = missile;
-    m_entityVector.push_back(missile);
+    position.first -= 1;
+    if (m_entityMap[position] == NULL)
+    {
+        Entity *missile = EntityFactory::createMissile(100, position.first, position.second);
+        m_entityMap[missile->getPosition()] = missile;
+        m_entityVector.push_back(missile);
+    }
 }
 
 void Game::retrieveUserInput()
@@ -111,12 +137,13 @@ void Game::start()
         {
             retrieveUserInput();
             m_ncurses->clearGameWindow();
+            updateEntity();
             for (auto &entity : m_entityVector)
             {
                 m_ncurses->inGameDraw(entity->getPosition().first, entity->getPosition().second, entity->renderer());
             }
             m_ncurses->refreshGameWindow();
+            usleep(100000);
         }
-        usleep(100);
     }
 }

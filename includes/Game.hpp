@@ -25,6 +25,7 @@ public:
     void retrieveUserInput();
     void addMissile();
     void updateEntity();
+    void moveMissile(Entity *entity, int index);
 };
 
 #endif // __GAME_H__
