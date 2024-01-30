@@ -9,7 +9,6 @@ Enemy::Enemy(int life, int positionX, int positionY)
 
 Enemy::~Enemy()
 {
-    std::cout << "Enemy kill" << std::endl;
 }
 
 char *Enemy::renderer() const
