@@ -13,6 +13,7 @@ private:
     int m_score;
     int m_level;
     int m_max_missile;
+    int m_enemyCounter;
     Ncurses *m_ncurses;
     Entity *m_player;
     std::map<std::pair<int, int>, Entity *> m_entityMap;
@@ -28,6 +29,7 @@ public:
     void addMissile();
     void updateEntity(int frame);
     void move(Entity *entity);
+    void cleanEntity();
 };
 
 #endif // __GAME_H__

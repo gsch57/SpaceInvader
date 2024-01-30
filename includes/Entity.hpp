@@ -5,7 +5,8 @@
 
 enum EntityType
 {
-    MISSILE,
+    PLAYER_MISSILE,
+    ENEMY_MISSILE,
     PLAYER,
     ENEMY
 };

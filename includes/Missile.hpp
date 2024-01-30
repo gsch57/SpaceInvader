@@ -6,8 +6,11 @@
 class Missile : public Entity
 {
 private:
+    EntityType m_type;
+    char m_reprentation;
+
 public:
-    Missile(int life, int positionX, int positionY);
+    Missile(int life, int positionX, int positionY, EntityType type);
     virtual ~Missile();
 
     virtual char *renderer() const;
