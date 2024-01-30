@@ -28,7 +28,6 @@ Game::~Game()
 
 void Game::loadLevel()
 {
-    // Go read config for level number
     if (m_level == 0)
     {
         int maxHeight = m_ncurses->getMaxGameWindowHeight();
@@ -58,16 +57,16 @@ void Game::loadLevel()
     }
 }
 
-void Game::move(Entity *entity, int index)
+void Game::move(Entity *entity)
 {
     std::pair<int, int> position = entity->getPosition();
     int max_width = m_ncurses->getMaxGameWindowWidth();
     int max_heigth = m_ncurses->getMaxGameWindowHeight();
-    if (m_entityMap[position])
+    if (m_entityMap.count(position) > 0)
         m_entityMap.erase(position);
 
     position = entity->move(max_width, max_heigth);
-    if (position.first >= max_heigth - 2 && entity->getType() != PLAYER)
+    if (position.first >= max_heigth && entity->getType() != PLAYER)
     {
         m_level = -1;
     }
@@ -76,7 +75,7 @@ void Game::move(Entity *entity, int index)
         if (m_entityToClean.count(entity->getPosition()) == 0)
             m_entityToClean[entity->getPosition()] = entity;
     }
-    else if (m_entityMap[position] != NULL)
+    else if (m_entityMap.count(position) > 0)
     {
         Entity *otherEntity = m_entityMap[position];
         if (m_entityToClean.count(entity->getPosition()) == 0)
@@ -105,14 +104,14 @@ void Game::updateEntity(int frame)
             {
             case MISSILE:
                 if (frame % 8 == 0)
-                    move(entity, index);
+                    move(entity);
                 break;
-            // case ENEMY:
-            //     if (frame % 4 == 0)
-            //         move(entity, index);
-            //     break;
+            case ENEMY:
+                if (frame % 4 == 0)
+                    move(entity);
+                break;
             case PLAYER:
-                move(entity, index);
+                move(entity);
                 break;
             }
         }
@@ -137,13 +136,13 @@ void Game::addMissile()
     if (m_max_missile >= 0)
     {
         std::pair<int, int> position = m_player->getPosition();
-        position.first -= 1;
+        position.first--;
         if (m_entityMap.count(position) == 0)
         {
             Entity *missile = EntityFactory::createMissile(100, position.first, position.second);
             m_entityMap[missile->getPosition()] = missile;
             m_entityVector.push_back(missile);
-            m_max_missile -= 1;
+            m_max_missile--;
         }
     }
 }
@@ -152,31 +151,21 @@ void Game::retrieveUserInput()
 {
     int keyPressed = m_ncurses->getUserInput();
     std::pair<int, int> position;
-    if (m_player)
-        position = m_player->getPosition();
+    position = m_player->getPosition();
 
     switch (keyPressed)
     {
     case KEY_LEFT:
-        if (m_player)
-        {
-            m_player->setPosition(position.first, position.second - 1);
-        }
-        break;
     case KEY_RIGHT:
-        if (m_player)
-        {
-            m_player->setPosition(position.first, position.second + 1);
-        }
+        if (m_entityMap.count(position) > 0)
+            m_entityMap.erase(position);
+        m_player->setPosition(position.first, position.second + 1 * (keyPressed == KEY_LEFT ? -1 : 1));
         break;
     case 'c':
         m_level = -1;
         break;
     case ' ':
-        if (m_player)
-        {
-            addMissile();
-        }
+        addMissile();
         break;
     }
 }

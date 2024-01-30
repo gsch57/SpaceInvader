@@ -27,7 +27,7 @@ public:
     void retrieveUserInput();
     void addMissile();
     void updateEntity(int frame);
-    void move(Entity *entity, int index);
+    void move(Entity *entity);
 };
 
 #endif // __GAME_H__
