@@ -1,4 +1,6 @@
 #include "../includes/Ncurses.hpp"
+#include <stdlib.h>
+#include <iostream>
 
 Ncurses::Ncurses(int const &window_height, int const &window_width) : m_windowHeight(window_height),
                                                                       m_windowWidth(window_width)
@@ -32,7 +34,9 @@ int Ncurses::getUserInput() const
 
 void Ncurses::inGameDraw(const int &x, const int &y, const char *content) const
 {
+    attron(COLOR_BLUE);
     mvwprintw(m_gameWindow, x, y, content);
+    attroff(COLOR_BLUE);
 }
 
 void Ncurses::clearGameWindow() const

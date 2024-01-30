@@ -12,10 +12,12 @@ class Game
 private:
     int m_score;
     int m_level;
+    int m_max_missile;
     Ncurses *m_ncurses;
     Entity *m_player;
     std::map<std::pair<int, int>, Entity *> m_entityMap;
     std::vector<Entity *> m_entityVector;
+    std::map<std::pair<int, int>, Entity *> m_entityToClean;
 
 public:
     Game();
@@ -24,8 +26,8 @@ public:
     void loadLevel();
     void retrieveUserInput();
     void addMissile();
-    void updateEntity();
-    void moveMissile(Entity *entity, int index);
+    void updateEntity(int frame);
+    void move(Entity *entity, int index);
 };
 
 #endif // __GAME_H__

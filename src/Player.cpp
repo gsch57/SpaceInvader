@@ -1,8 +1,12 @@
 #include "../includes/Player.hpp"
-#include "../includes/Entity.hpp"
+#include <iostream>
 
 Player::Player(int life, int positionX, int positionY)
     : Entity(life, positionX, positionY)
+{
+}
+
+Player::~Player()
 {
 }
 
@@ -11,8 +15,9 @@ char *Player::renderer() const
     return "^";
 }
 
-void Player::move() const
+std::pair<int, int> Player::move(int max_width, int max_weigth)
 {
+    return m_position;
 }
 
 EntityType Player::getType() const

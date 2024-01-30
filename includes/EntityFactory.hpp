@@ -4,12 +4,13 @@
 #include "Entity.hpp"
 #include "Player.hpp"
 #include "Missile.hpp"
+#include "Enemy.hpp"
 
 class EntityFactory
 {
 public:
     static Entity *createPlayer(int life, int positionX, int positionY);
-    // static Entity createEnemy(int life, int position);
+    static Entity *createEnemy(int life, int positionX, int positionY);
     static Entity *createMissile(int life, int positionX, int positionY);
 };
 

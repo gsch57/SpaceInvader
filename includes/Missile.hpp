@@ -8,9 +8,10 @@ class Missile : public Entity
 private:
 public:
     Missile(int life, int positionX, int positionY);
+    virtual ~Missile();
 
     virtual char *renderer() const;
-    virtual void move() const;
+    virtual std::pair<int, int> move(int max_width, int max_weigth);
     virtual EntityType getType() const;
 };
 #endif // __MISSILE_H__

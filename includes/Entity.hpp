@@ -12,7 +12,7 @@ enum EntityType
 
 class Entity
 {
-private:
+protected:
     int m_life;
     std::pair<int, int> m_position;
 
@@ -21,7 +21,7 @@ public:
     virtual ~Entity(){};
 
     virtual char *renderer() const = 0;
-    virtual void move() const = 0;
+    virtual std::pair<int, int> move(int max_width, int max_weigth) = 0;
 
     std::pair<int, int> getPosition() const;
     void setPosition(int positionX, int positionY);
