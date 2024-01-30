@@ -23,5 +23,5 @@ int Entity::getLife() const
 
 char *Entity::renderer() const
 {
-    return "";
+    return new char();
 }

@@ -13,7 +13,7 @@ Enemy::~Enemy()
 
 char *Enemy::renderer() const
 {
-    return "W";
+    return new char('W');
 }
 
 std::pair<int, int> Enemy::move(int max_width, int max_weigth)

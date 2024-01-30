@@ -12,7 +12,7 @@ Player::~Player()
 
 char *Player::renderer() const
 {
-    return "^";
+    return new char('^');
 }
 
 std::pair<int, int> Player::move(int max_width, int max_weigth)
