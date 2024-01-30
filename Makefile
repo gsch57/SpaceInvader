@@ -16,7 +16,8 @@ MAIN    = main.cpp \
           src/Game.cpp \
           src/Player.cpp \
           src/EntityFactory.cpp \
-          src/Missile.cpp
+          src/Missile.cpp \
+          src/Enemy.cpp
 
 OBJS_MAIN = $(MAIN:.cpp=.o)
 

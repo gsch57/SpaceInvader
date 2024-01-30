@@ -39,26 +39,53 @@ void Game::loadLevel()
             m_entityMap[position] = m_player;
             m_entityVector.push_back(m_player);
         }
+        Entity *enemy = EntityFactory::createEnemy(10, 10, 10);
+        if (enemy)
+        {
+            m_entityMap[std::pair<int, int>(10, 10)] = enemy;
+            m_entityVector.push_back(enemy);
+        }
     }
 }
 
-void Game::moveMissile(Entity *entity, int index)
+void Game::moveMissile(Entity *missile, int index)
 {
-    std::pair<int, int> position = entity->getPosition();
-    if (position.first - 1 > 0)
+    std::pair<int, int> position = missile->getPosition();
+    position.first--; // Déplacement vers la gauche
+
+    // Vérifier s'il y a une collision avec un ennemi
+    if (m_entityMap.count(position) && m_entityMap[position]->getType() == ENEMY)
     {
-        if (m_entityMap[position])
-            m_entityMap.erase(position);
-        position.first -= 1;
-        entity->setPosition(position.first, position.second);
-        m_entityMap[position] = entity;
+        // Supprimer l'ennemi de m_entityMap et m_entityVector
+        Entity *enemy = m_entityMap[position];
+        m_entityMap.erase(position);
+        m_entityVector.erase(std::remove(m_entityVector.begin(), m_entityVector.end(), enemy), m_entityVector.end());
+
+        // Supprimer le missile de m_entityMap et m_entityVector
+        m_entityMap.erase(missile->getPosition());
+        m_entityVector.erase(m_entityVector.begin() + index);
+
+        // Supprimer les objets de la mémoire
+        delete enemy;
+        delete missile;
     }
     else
     {
-        if (m_entityMap[position])
-            m_entityMap.erase(position);
-        if (m_entityVector.end() > m_entityVector.begin() + index)
+        // Déplacer le missile
+        if (position.first >= 0)
+        {
+            // Mettre à jour la position du missile dans m_entityMap
+            m_entityMap.erase(missile->getPosition());
+            missile->setPosition(position.first, position.second);
+            m_entityMap[position] = missile;
+        }
+        else
+        {
+            // Supprimer le missile s'il sort de l'écran
+            m_entityMap.erase(missile->getPosition());
             m_entityVector.erase(m_entityVector.begin() + index);
+            delete missile;
+        }
     }
 }
 
@@ -140,7 +167,8 @@ void Game::start()
             updateEntity();
             for (auto &entity : m_entityVector)
             {
-                m_ncurses->inGameDraw(entity->getPosition().first, entity->getPosition().second, entity->renderer());
+                if (entity)
+                    m_ncurses->inGameDraw(entity->getPosition().first, entity->getPosition().second, entity->renderer());
             }
             m_ncurses->refreshGameWindow();
             usleep(100000);
