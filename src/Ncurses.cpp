@@ -1,5 +1,6 @@
 #include "../includes/Ncurses.hpp"
 #include <stdlib.h>
+#include <queue>
 #include <iostream>
 
 Ncurses::Ncurses(int const &window_height, int const &window_width) : m_windowHeight(window_height),
@@ -10,7 +11,6 @@ Ncurses::Ncurses(int const &window_height, int const &window_width) : m_windowHe
     keypad(stdscr, true); // initialise the keyboard: we can use arrows for directions
     noecho();             // user input is not displayed on the screen
     curs_set(0);          // cursor symbol is not not displayed on the screen (Linux)
-
     m_maxGameWindowWidth = static_cast<int>(window_width * 0.8);
     m_maxGameWindowHeight = m_windowHeight - 1;
 
@@ -27,16 +27,16 @@ Ncurses::Ncurses(int const &window_height, int const &window_width) : m_windowHe
     wrefresh(m_scoreWindow);
 }
 
-int Ncurses::getUserInput() const
+void Ncurses::getUserInput(std::queue<int> &keyPresseds) const
 {
-    return getch();
+    int c;
+    while ((c = getch()) != ERR)
+        keyPresseds.push(c);
 }
 
 void Ncurses::inGameDraw(const int &x, const int &y, const char *content) const
 {
-    attron(COLOR_BLUE);
-    mvwprintw(m_gameWindow, x, y, content);
-    attroff(COLOR_BLUE);
+    mvwaddch(m_gameWindow, x, y, content[0]);
 }
 
 void Ncurses::clearGameWindow() const

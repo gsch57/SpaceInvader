@@ -6,6 +6,7 @@
 #include "Ncurses.hpp"
 #include "Entity.hpp"
 #include "Player.hpp"
+#include <queue>
 
 class Game
 {
@@ -19,6 +20,7 @@ private:
     std::map<std::pair<int, int>, Entity *> m_entityMap;
     std::vector<Entity *> m_entityVector;
     std::map<std::pair<int, int>, Entity *> m_entityToClean;
+    std::queue<int> m_keyPresseds;
 
 public:
     Game();
@@ -26,10 +28,11 @@ public:
     void start();
     void loadLevel();
     void retrieveUserInput();
-    void addMissile();
+    void addMissile(EntityType missileType, Entity *entity = nullptr);
     void updateEntity(int frame);
     void move(Entity *entity);
     void cleanEntity();
+    double getCurrentTime();
 };
 
 #endif // __GAME_H__

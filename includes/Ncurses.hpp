@@ -2,6 +2,8 @@
 #define __NCURSES_H__
 
 #include <ncurses.h>
+#include <vector>
+#include <queue>
 
 class Ncurses
 {
@@ -18,7 +20,7 @@ private:
 public:
     Ncurses(int const &window_height = 50, int const &window_width = 80);
     ~Ncurses();
-    int getUserInput() const;
+    void getUserInput(std::queue<int> &keyPresseds) const;
 
     void inGameDraw(const int &x, const int &y, const char *content) const;
     void drawScore(const int &x, const int &y, const char *content) const;
