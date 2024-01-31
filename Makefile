@@ -1,35 +1,57 @@
-# the compiler to use
-CC      = g++
+# Compiler
+CC      = clang++
 
-# compiler flags:
-#  -g    adds debugging information to the executable file
-#  -Wall turns on most, but not all, compiler warnings
-CCFLAGS = -g -Wall -std=c++11
+# Compiler flags
+CXXFLAGS = -g -Wall -std=c++11
 
+# Linker flags
+LDFLAGS = -lncurses
+
+# Directories
+SRCDIR  = src
+INCDIR  = includes
+OBJDIR  = obj
+BINDIR  = bin
+
+# Target executable name
+TARGET  = spaceInvader
+
+# Source files
+SOURCES := $(wildcard $(SRCDIR)/*.cpp)
+INCLUDES := $(wildcard $(INCDIR)/*.hpp)
+OBJECTS := $(SOURCES:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
+
+# Main source file
+MAIN_SRC := main.cpp
+
+# Main object file
+MAIN_OBJ := $(OBJDIR)/main.o
+
+# Remove command
 RM      = rm -f
 
-NAME    = spaceInvader
+# Build target
+$(BINDIR)/$(TARGET): $(OBJECTS) $(MAIN_OBJ)
+	$(CC) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
-MAIN    = main.cpp \
-          src/Entity.cpp \
-          src/Ncurses.cpp \
-          src/Game.cpp \
-          src/Player.cpp \
-          src/EntityFactory.cpp \
-          src/Missile.cpp \
-          src/Enemy.cpp
+# Compile main source file
+$(MAIN_OBJ): $(MAIN_SRC)
+	$(CC) $(CXXFLAGS) -I$(INCDIR) -c $< -o $@
 
-OBJS_MAIN = $(MAIN:.cpp=.o)
+# Compile sources
+$(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
+	$(CC) $(CXXFLAGS) -I$(INCDIR) -c $< -o $@
 
-all: $(NAME)
-
-$(NAME): $(OBJS_MAIN)
-	$(CC) $(CCFLAGS) -o $(NAME) $(OBJS_MAIN) -lncurses
-
+# Clean objects
 clean:
-	$(RM) $(OBJS_MAIN)
+	$(RM) $(OBJECTS) $(MAIN_OBJ)
 
+# Clean all
 fclean: clean
-	$(RM) $(NAME)
+	$(RM) $(BINDIR)/$(TARGET)
 
+# Rebuild
 re: fclean all
+
+# PHONY targets
+.PHONY: all clean fclean re
