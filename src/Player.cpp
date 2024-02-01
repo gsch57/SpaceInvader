@@ -4,6 +4,7 @@
 Player::Player(int life, int positionX, int positionY)
     : Entity(life, positionX, positionY)
 {
+    m_speed = 100;
 }
 
 Player::~Player()

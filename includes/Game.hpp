@@ -15,6 +15,9 @@ private:
     int m_level;
     int m_max_missile;
     int m_enemyCounter;
+    int m_totalFrames;
+    double m_totalTime;
+    double m_fps;
     Ncurses *m_ncurses;
     Entity *m_player;
     std::map<std::pair<int, int>, Entity *> m_entityMap;

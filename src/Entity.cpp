@@ -4,6 +4,7 @@ Entity::Entity(int life, int positionX, int positionY)
 {
     m_life = life;
     m_position = std::pair<int, int>(positionX, positionY);
+    m_lastUpdateTime = 0.0;
 }
 
 std::pair<int, int> Entity::getPosition() const

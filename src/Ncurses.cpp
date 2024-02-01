@@ -11,7 +11,7 @@ Ncurses::Ncurses(int const &window_height, int const &window_width) : m_windowHe
     keypad(stdscr, true); // initialise the keyboard: we can use arrows for directions
     noecho();             // user input is not displayed on the screen
     curs_set(0);          // cursor symbol is not not displayed on the screen (Linux)
-    m_maxGameWindowWidth = static_cast<int>(window_width * 0.8);
+    m_maxGameWindowWidth = static_cast<int>(window_width * 0.7);
     m_maxGameWindowHeight = m_windowHeight - 1;
 
     m_window = newwin(m_windowHeight, m_windowWidth, 0, 0);
@@ -44,6 +44,11 @@ void Ncurses::clearGameWindow() const
     wclear(m_gameWindow);
 }
 
+void Ncurses::clearScoreWindow() const
+{
+    wclear(m_gameWindow);
+}
+
 void Ncurses::refreshGameWindow() const
 {
     box(m_gameWindow, 0, 0);
@@ -53,7 +58,16 @@ void Ncurses::refreshGameWindow() const
 
 void Ncurses::drawScore(const int &x, const int &y, const char *content) const
 {
-    mvwprintw(m_scoreWindow, x, y, content);
+    int yPos = y;
+    if (y == -1)
+        yPos = (m_windowWidth - m_maxGameWindowWidth - 2 - strlen(content)) / 2;
+    mvwprintw(m_scoreWindow, x, yPos, content);
+}
+
+void Ncurses::refreshScoreWindow() const
+{
+    box(m_scoreWindow, 0, 0);
+    refresh();
     wrefresh(m_scoreWindow);
 }
 

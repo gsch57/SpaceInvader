@@ -16,6 +16,8 @@ class Entity
 protected:
     int m_life;
     std::pair<int, int> m_position;
+    double m_lastUpdateTime;
+    double m_speed;
 
 public:
     Entity(int life, int positionX, int positionY);
@@ -28,6 +30,10 @@ public:
     void setPosition(int positionX, int positionY);
     int getLife() const;
     virtual EntityType getType() const = 0;
+
+    double getLastUpdateTime() const { return m_lastUpdateTime; }
+    void setLastUpdateTime(double time) { m_lastUpdateTime = time; }
+    double getSpeed() const { return m_speed; };
 };
 
 struct EntityComparator

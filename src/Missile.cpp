@@ -6,6 +6,7 @@ Missile::Missile(int life, int positionX, int positionY, EntityType type)
 {
     m_type = type;
     m_reprentation = m_type == PLAYER_MISSILE ? 'i' : '*';
+    m_speed = m_type == PLAYER_MISSILE ? 50 : 25;
 }
 
 Missile::~Missile()

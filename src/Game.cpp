@@ -4,18 +4,22 @@
 #include <stdlib.h>
 #include <time.h>
 #include <iostream>
+#include <string>
 #include <thread>
 #include <chrono>
 #include <mutex>
 
 Game::Game()
 {
-    m_ncurses = new Ncurses(35, 50);
-    m_max_missile = 2;
+    m_ncurses = new Ncurses(35, 80);
+    m_max_missile = 1;
     m_score = 0;
     m_level = 0;
     m_player = nullptr;
     m_enemyCounter = 0;
+    m_totalFrames = 0;
+    m_totalTime = 0.0;
+    m_fps = 0.0;
     srand(time(NULL));
 }
 
@@ -71,8 +75,11 @@ void Game::move(Entity *entity)
     int max_width = m_ncurses->getMaxGameWindowWidth();
     int max_heigth = m_ncurses->getMaxGameWindowHeight();
     if (m_entityMap.count(position) > 0)
+    {
         m_entityMap.erase(position);
-
+        m_ncurses->inGameDraw(position.first, position.second, " ");
+    }
+    m_ncurses->inGameDraw(position.first, position.second, " ");
     position = entity->move(max_width, max_heigth);
     if (position.first >= max_heigth && entity->getType() != PLAYER && entity->getType() != ENEMY_MISSILE)
     {
@@ -126,7 +133,9 @@ void Game::cleanEntity()
         default:
             break;
         }
-        m_entityMap.erase(entity->getPosition());
+        std::pair<int, int> position = entity->getPosition();
+        m_entityMap.erase(position);
+        m_ncurses->inGameDraw(position.first, position.second, " ");
         m_entityVector.erase(std::remove(m_entityVector.begin(), m_entityVector.end(), entity), m_entityVector.end());
         delete entity;
     }
@@ -137,6 +146,7 @@ void Game::cleanEntity()
 
 void Game::updateEntity(int frame)
 {
+    auto currentTime = getCurrentTime();
     int index = 0;
     while (index < m_entityVector.size())
     {
@@ -144,30 +154,18 @@ void Game::updateEntity(int frame)
 
         if (entity)
         {
+            double speed = entity->getSpeed();
+            double elapsedTime = currentTime - entity->getLastUpdateTime();
+
             EntityType type = entity->getType();
-            switch (type)
+            if (type == PLAYER || elapsedTime >= (1.0 / speed))
             {
-            case PLAYER_MISSILE:
-                if (frame % 8 == 0)
-                    move(entity);
-                break;
-            case ENEMY_MISSILE:
-                if (frame % 8 == 0)
-                    move(entity);
-                break;
-            case ENEMY:
-                if (frame % 4 == 0)
-                {
-                    move(entity);
-                    if ((rand() % (50 + m_level * 100) + 1) == 20)
-                        addMissile(ENEMY_MISSILE, entity);
-                }
-                break;
-            case PLAYER:
                 move(entity);
-                break;
-            default:
-                break;
+                if (type == ENEMY && (rand() % (50 + m_level * 100) + 1) == 20)
+                {
+                    addMissile(ENEMY_MISSILE, entity);
+                }
+                entity->setLastUpdateTime(getCurrentTime());
             }
         }
         index++;
@@ -179,7 +177,7 @@ void Game::addMissile(EntityType missileType, Entity *entity)
 {
     std::pair<int, int> position;
     Entity *missile = nullptr;
-    if (missileType == PLAYER_MISSILE && m_max_missile >= 0)
+    if (missileType == PLAYER_MISSILE && m_max_missile > 0)
     {
         position = m_player->getPosition();
         position.first--;
@@ -207,7 +205,6 @@ void Game::addMissile(EntityType missileType, Entity *entity)
 
 void Game::retrieveUserInput()
 {
-    m_ncurses->getUserInput(m_keyPresseds);
     std::pair<int, int> position;
     if (m_player != nullptr)
     {
@@ -222,7 +219,10 @@ void Game::retrieveUserInput()
             case KEY_LEFT:
             case KEY_RIGHT:
                 if (m_entityMap.count(position) > 0)
+                {
                     m_entityMap.erase(position);
+                    m_ncurses->inGameDraw(position.first, position.second + 1, " ");
+                }
                 m_player->setPosition(position.first, position.second + 1 * (keyPressed == KEY_LEFT ? -1 : 1));
                 break;
             case 'c':
@@ -245,29 +245,26 @@ double Game::getCurrentTime()
 
 void Game::start()
 {
-    const double targetFrameTime = 0.016; // Temps cible par frame (en secondes, par exemple 1/60)
+    double targetFrameTime = 0.0016;
 
-    // Créer un thread pour récupérer les entrées utilisateur
     std::thread inputThread([this]()
                             {
         while (m_level >= 0) {
-            retrieveUserInput();
-            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            m_ncurses->getUserInput(m_keyPresseds);
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         } });
 
     while (m_level >= 0)
     {
-        // Initialiser le niveau;
         loadLevel();
         int frame = 0;
-        double startTime, endTime, deltaTime;
+        double startTime, startFrameTime, deltaTime;
+        startTime = getCurrentTime();
 
         while (m_enemyCounter > 0 && m_level >= 0)
         {
-            if (frame > 12)
-                frame = 0;
-            m_ncurses->clearGameWindow();
             updateEntity(frame);
+            retrieveUserInput();
             for (auto &entity : m_entityVector)
             {
                 if (entity)
@@ -275,18 +272,24 @@ void Game::start()
             }
             m_ncurses->refreshGameWindow();
 
-            // Mesurer le temps écoulé
-            startTime = getCurrentTime();
+            startFrameTime = getCurrentTime();
+            deltaTime = startFrameTime - startTime;
+            m_totalFrames++;
+            m_totalTime += deltaTime;
+            if (m_totalTime >= 1.0)
+            {
+                m_fps = m_totalFrames / m_totalTime;
+                m_totalFrames = 0;
+                m_totalTime = 0.0;
+                startTime = getCurrentTime();
+                m_ncurses->drawScore(1, -1, (std::to_string(static_cast<int>(m_fps)) + " fps").c_str());
+            }
+            m_ncurses->refreshScoreWindow();
 
-            // Calculer la durée de cette frame
-            endTime = getCurrentTime();
-            deltaTime = endTime - startTime;
-
-            // Attendre jusqu'à ce que le temps de la frame soit atteint
             double sleepTime = targetFrameTime - deltaTime;
             if (sleepTime > 0)
             {
-                usleep(sleepTime * 1000000); // Convertir le temps de sommeil en microsecondes
+                usleep(sleepTime * 1000000);
             }
 
             frame++;

@@ -5,6 +5,7 @@ Enemy::Enemy(int life, int positionX, int positionY)
     : Entity(life, positionX, positionY)
 {
     m_direction = positionX % 2 == 0;
+    m_speed = 15;
 }
 
 Enemy::~Enemy()

@@ -25,7 +25,9 @@ public:
     void inGameDraw(const int &x, const int &y, const char *content) const;
     void drawScore(const int &x, const int &y, const char *content) const;
     void refreshGameWindow() const;
+    void refreshScoreWindow() const;
     void clearGameWindow() const;
+    void clearScoreWindow() const;
 
     int getMaxGameWindowWidth() const;
     int getMaxGameWindowHeight() const;
