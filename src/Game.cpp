@@ -8,6 +8,7 @@
 #include <thread>
 #include <chrono>
 #include <mutex>
+#include <algorithm>
 
 Game::Game()
 {

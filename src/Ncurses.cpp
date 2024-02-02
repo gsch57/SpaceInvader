@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <queue>
 #include <iostream>
+#include <cstring>
 
 Ncurses::Ncurses(int const &window_height, int const &window_width) : m_windowHeight(window_height),
                                                                       m_windowWidth(window_width)
