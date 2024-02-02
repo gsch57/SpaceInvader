@@ -31,27 +31,39 @@ MAIN_OBJ := $(OBJDIR)/main.o
 RM      = rm -f
 
 # Build target
-$(BINDIR)/$(TARGET): $(OBJECTS) $(MAIN_OBJ)
+$(BINDIR)/$(TARGET): $(OBJECTS) $(MAIN_OBJ) | $(BINDIR)
 	$(CC) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
 # Compile main source file
-$(MAIN_OBJ): $(MAIN_SRC)
+$(MAIN_OBJ): $(MAIN_SRC) | $(OBJDIR)
 	$(CC) $(CXXFLAGS) -I$(INCDIR) -c $< -o $@
 
 # Compile sources
-$(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
+$(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.cpp | $(OBJDIR)
 	$(CC) $(CXXFLAGS) -I$(INCDIR) -c $< -o $@
 
-# Clean objects
+# Create directories if they don't exist
+$(OBJDIR):
+	mkdir -p $(OBJDIR)
+
+$(BINDIR):
+	mkdir -p $(BINDIR)
+
+# Clean objects and executables
 clean:
 	$(RM) $(OBJECTS) $(MAIN_OBJ)
 
 # Clean all
 fclean: clean
 	$(RM) $(BINDIR)/$(TARGET)
+	$(RM) -r $(OBJDIR)
+	$(RM) -r $(BINDIR)
 
 # Rebuild
 re: fclean all
+
+# Build all
+all: $(BINDIR)/$(TARGET)
 
 # PHONY targets
 .PHONY: all clean fclean re
